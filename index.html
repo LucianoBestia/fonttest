@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <title>fonttest</title>
+  <link rel="stylesheet" href="css/fonttest.css">
+</head>
+
+<body>
+  <div>
+    <h1>abcdefghij</h1>
+    <h2>abcdefghij</h2>
+    <h3>abcdefghij</h3>
+    <h4>abcdefghij</h4>
+    <h5>abcdefghij</h5>
+    <h6>abcdefghij</h6>
+    <h7>abcdefghij</h7>
+    <p>abcdefghij</p>
+  </div>
+
+  <!--section/div for rust/wasm code-->
+  <div id="div_for_virtual_dom">
+  </div>
+
+  <!--importing rust/wasm code-->
+  <script type="module">
+    import init from "./pkg/fonttest.js";
+    init("./pkg/fonttest_bg.wasm");
+  </script>
+</body>
+
+</html>
