@@ -41,6 +41,7 @@ conv = "0.3.3"
 version = "0.3.34"
 features = [
   "AbortController",
+  "CanvasRenderingContext2d",
   "console",
   "CssStyleDeclaration",
   "Document",
@@ -52,6 +53,7 @@ features = [
   "EventTarget",
   "FormData",
   "Headers",
+  "HtmlCanvasElement",
   "HtmlCollection",
   "HtmlElement",
   "HtmlFormElement",
@@ -71,6 +73,7 @@ features = [
   "RequestRedirect",
   "Response",
   "Storage",
+  "TextMetrics",
   "WebSocket",
   "Window",
 ]

@@ -62,16 +62,11 @@
 
 //region: extern and use statements
 
-extern crate console_error_panic_hook;
-extern crate log;
-extern crate serde;
-extern crate strum;
-extern crate strum_macros;
-extern crate web_sys;
-#[macro_use]
-extern crate unwrap;
-extern crate conv;
-
+use console_error_panic_hook;
+use serde;
+use web_sys;
+use unwrap::unwrap;
+use conv;
 use conv::{ConvUtil};
 use dodrio::builder::text;
 use wasm_bindgen::prelude::*;
@@ -104,29 +99,72 @@ pub fn wasm_bindgen_start() {
     let div_for_virtual_dom = unwrap!(document.get_element_by_id("div_for_virtual_dom"));
 
     // Construct a new rendering component.
-    let mut rrc = RootRenderingComponent::new();
-
-    let window_width =
-        unwrap!(unwrap!(JsValue::as_f64(&unwrap!(window.inner_width()))).approx_as::<usize>());
-
-    let body = unwrap!(document.body());
-    let body_width = body.client_width();
-
-    let cl_test_text_width = document.get_elements_by_tag_name("h1");
-    let test_text_width = unwrap!(cl_test_text_width.item(0));
-    let html_element_test_width = unwrap!(test_text_width.dyn_into::<web_sys::HtmlElement>());
-    let text_width = html_element_test_width.offset_width();
-
-    rrc.respbody = format!(
-        "width text {:?}px as 16px inside body {:?}px window {:?}px",
-        text_width, body_width, window_width
-    );
+    let rrc = RootRenderingComponent::new();
 
     // Mount the component to the `<body>`.
     let vdom = dodrio::Vdom::new(&div_for_virtual_dom, rrc);
 
     // Run the component forever.
     vdom.forget();
+}
+
+//I put this on a button to avoid confusio if the css initialization was already finished.
+pub fn startfonts() {
+    let window = unwrap!(web_sys::window());
+    let document = unwrap!(window.document());
+    let window_width =
+        unwrap!(unwrap!(JsValue::as_f64(&unwrap!(window.inner_width()))).approx_as::<usize>());
+
+    let body = unwrap!(document.body());
+    let body_width = body.client_width();
+    let mut ss = "".to_owned();
+    ss.push_str(&format!(
+        "<p>width body {:?}px window {:?}px </p>",
+        body_width, window_width
+    ));
+    //this is the target cpls I need for css
+    let cpls = vec![60, 48, 40, 32, 26, 24, 20, 16, 13];
+    let mut new_px: Vec<i32> = vec![];
+    //region: find cpl for this device and body size
+    //I tried the canvas context 2d metrics width, but the numbers looked wrong.
+    //Start with 1 px and go up by 1 px.
+    //write it on the screen.
+    let mut j = 0;
+    let div_for_fonts = unwrap!(document.get_element_by_id("div_for_fonts"));
+    for i in 1..100 {
+        let target_cpl = cpls[j];
+        let s = format!(
+            r#"<p><span id="fs{0}" style="font-size: {0}px !important;">abcdefghij</span></p>"#,
+            i
+        );
+        ss.push_str(&s);
+        div_for_fonts.set_inner_html(&s);
+
+        let test_text_width = unwrap!(document.get_element_by_id(&format!("fs{}", i)));
+        let html_element_test_width = unwrap!(test_text_width.dyn_into::<web_sys::HtmlElement>());
+        let text_width = html_element_test_width.offset_width();
+        let cpl = (body_width as f64 / (text_width as f64 / 10.0)).floor();
+        log1(&format!("text_width {}", text_width));
+        ss.push_str(&format!("<p>width {}  {}px  {}cpl</p>", i, text_width, cpl));
+
+        if cpl <= target_cpl as f64 {
+            new_px.push(i);
+            j += 1;
+            if j >= cpls.len() {
+                break;
+            }
+        }
+    }
+    let mut s = "".to_owned();
+    for x in &new_px {
+        s.push_str(&format!(
+            r#"<p>{0}px<span style="font-size: {0}px !important;">abcdefghij</span></p>"#,
+            x
+        ));
+    }
+    ss.push_str(&format!("<p>{:?}{}</p>", new_px, &s));
+    div_for_fonts.set_inner_html(&ss);
+    //end region
 }
 
 impl RootRenderingComponent {
@@ -146,13 +184,17 @@ impl Render for RootRenderingComponent {
         let bump = cx.bump;
         dodrio!(bump,
             <div>
-                <h2>
+            <button style= "margin:auto;display:block;" onclick={ move |root, vdom, _event| {
+                startfonts();
+                }}>"startfonts"
+            </button>
+                <pre>
                     {vec![text(
                         bumpalo::format!(in bump, "{}",
                         self.respbody)
                         .into_bump_str()
                     )]}
-                </h2>
+                </pre>
             </div>
         )
     }
