@@ -9,6 +9,7 @@ readme = "README.md"
 license = "MIT"
 keywords = ["wasm","font","size"]
 categories = ["learning"]
+publish = false
 
 [lib]
 crate-type = ["cdylib"]

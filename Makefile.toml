@@ -39,7 +39,7 @@ skip_core_tasks = true
         "rsync -avz --delete-after /home/luciano/rustprojects/fonttest/css/ /home/luciano/rustprojects/googlecloud/var/www/html/fonttest/css/",
         "rsync -avz --delete-after /home/luciano/rustprojects/fonttest/pkg/ /home/luciano/rustprojects/googlecloud/var/www/html/fonttest/pkg/",
         "rsync -avz --delete-after /home/luciano/rustprojects/fonttest/index.html /home/luciano/rustprojects/googlecloud/var/www/html/fonttest/index.html",
-        "rsync -e ssh -avz --delete-after /home/luciano/rustprojects/googlecloud/var/www/html/fonttest/ luciano_bestia@34.87.17.103:/var/www/html/fonttest/",
+        "rsync -e ssh -avz --delete-after /home/luciano/rustprojects/googlecloud/var/www/html/fonttest/ luciano_bestia@bestia.dev:/var/www/html/fonttest/",
     ]
 # endregion
 
